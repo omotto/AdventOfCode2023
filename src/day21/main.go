@@ -106,7 +106,8 @@ func main() {
 	abs, _ := filepath.Abs("src/day21/input.txt")
 	output, _ := file.ReadInput(abs)
 	fmt.Println(getGardenPlotsFilled(output, 64))
-	//fmt.Println(getGardenPlotsFilled2(output, 26501365))
+	//fmt.Println(getGardenPlotsFilled2(output, 26501365, ...))
+	steps := 26501365
 	p := make([]int, 3)
 	size := len(output) // NxN
 	half := size / 2
@@ -116,7 +117,7 @@ func main() {
 	a := (p[2] + p[0] - 2*p[1]) / 2
 	b := p[1] - p[0] - a
 	c := p[0]
-	n := 26501365 / size
+	n := steps / size
 	result := a*n*n + b*n + c
 	fmt.Println(result) // 584211423220706
 }

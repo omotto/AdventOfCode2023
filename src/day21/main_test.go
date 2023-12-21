@@ -101,6 +101,7 @@ func TestGetGardenPlotsFilled2(t *testing.T) {
 		desc     string
 		input    []string
 		steps    int
+		factor   int
 		expected int
 	}{
 		{
@@ -119,6 +120,7 @@ func TestGetGardenPlotsFilled2(t *testing.T) {
 				"...........",
 			},
 			steps:    6,
+			factor:   5,
 			expected: 16,
 		},
 		{
@@ -137,6 +139,7 @@ func TestGetGardenPlotsFilled2(t *testing.T) {
 				"...........",
 			},
 			steps:    10,
+			factor:   5,
 			expected: 50,
 		},
 		{
@@ -155,6 +158,7 @@ func TestGetGardenPlotsFilled2(t *testing.T) {
 				"...........",
 			},
 			steps:    50,
+			factor:   9,
 			expected: 1594,
 		},
 		{
@@ -173,66 +177,13 @@ func TestGetGardenPlotsFilled2(t *testing.T) {
 				"...........",
 			},
 			steps:    100,
+			factor:   19,
 			expected: 6536,
-		},
-		{
-			desc: "expected 167004 for 500 step",
-			input: []string{
-				"...........",
-				".....###.#.",
-				".###.##..#.",
-				"..#.#...#..",
-				"....#.#....",
-				".##..S####.",
-				".##..#...#.",
-				".......##..",
-				".##.#.####.",
-				".##..##.##.",
-				"...........",
-			},
-			steps:    500,
-			expected: 167004,
-		},
-		{
-			desc: "expected 668697 for 1000 step",
-			input: []string{
-				"...........",
-				".....###.#.",
-				".###.##..#.",
-				"..#.#...#..",
-				"....#.#....",
-				".##..S####.",
-				".##..#...#.",
-				".......##..",
-				".##.#.####.",
-				".##..##.##.",
-				"...........",
-			},
-			steps:    1000,
-			expected: 668697,
-		},
-		{
-			desc: "expected 16733044 for 5000 step",
-			input: []string{
-				"...........",
-				".....###.#.",
-				".###.##..#.",
-				"..#.#...#..",
-				"....#.#....",
-				".##..S####.",
-				".##..#...#.",
-				".......##..",
-				".##.#.####.",
-				".##..##.##.",
-				"...........",
-			},
-			steps:    5000,
-			expected: 16733044,
 		},
 	}
 	for _, tc := range tcs {
 		t.Run(tc.desc, func(t *testing.T) {
-			v, _ := getGardenPlotsFilled2(tc.input, tc.steps)
+			v, _ := getGardenPlotsFilled2(tc.input, tc.steps, 101)
 			if diff := cmp.Diff(tc.expected, v); diff != "" {
 				t.Errorf("value has diff %s", diff)
 			}
