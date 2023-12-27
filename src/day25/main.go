@@ -18,16 +18,16 @@ func parseInput(in []string) (map[string][]string, error) {
 		}
 		src := s[0]
 		dst := strings.Split(s[1], " ")
+		nodes[src] = append(nodes[src], dst...)
 		for _, d := range dst {
 			nodes[d] = append(nodes[d], src)
-			nodes[src] = append(nodes[src], d)
 		}
 	}
 	return nodes, nil
 }
 
-// Swept all nodes from every node to get how many times one vector is used
-func sweptAlVectors(nodes map[string][]string) map[string]int {
+// Swept all nodes straight from every node to get how many times one vector is used
+func getWeightedVectors(nodes map[string][]string) map[string]int {
 	vectors := map[string]int{}
 	for node, _ := range nodes {
 		visited := map[string]struct{}{}
@@ -53,38 +53,26 @@ func sweptAlVectors(nodes map[string][]string) map[string]int {
 	return vectors
 }
 
-func removeVectorWithMoreSweeps(nodes map[string][]string, vectors map[string]int) string {
-	var (
-		maxVector string
-		max       int = 0
-	)
-	// Get max swept vector
-	for k, v := range vectors {
-		if v > max {
-			max = v
-			maxVector = k
-		}
-	}
-	// Remove from vectors
-	delete(vectors, maxVector)
+func removeVectorFromNodes(nodes map[string][]string, maxVector string) {
 	// Remove from nodes
 	s := strings.Split(maxVector, ",")
 	src := s[0]
 	dst := s[1]
 	var newDst, newSrc []string
+	//
 	for _, v := range nodes[src] {
 		if v != dst {
 			newDst = append(newDst, v)
 		}
 	}
 	nodes[src] = newDst
+	//
 	for _, v := range nodes[dst] {
 		if v != src {
 			newSrc = append(newSrc, v)
 		}
 	}
 	nodes[dst] = newSrc
-	return maxVector
 }
 
 func countNodes(nodes map[string][]string) int {
@@ -113,10 +101,20 @@ func getMultipliedSize(in []string) (int, error) {
 	if nodes, err := parseInput(in); err != nil {
 		return 0, err
 	} else {
+		var maxVector string
 		totalNodes := len(nodes)
 		for idx := 0; idx < 3; idx++ {
-			vectors := sweptAlVectors(nodes)
-			removeVectorWithMoreSweeps(nodes, vectors)
+			vectors := getWeightedVectors(nodes)
+			// Get max swept vector
+			max := 0
+			for k, v := range vectors {
+				if v > max {
+					max = v
+					maxVector = k
+				}
+			}
+			// remove it
+			removeVectorFromNodes(nodes, maxVector)
 		}
 		firstGroup := countNodes(nodes) // fewer nodes due to not connected
 		secondGroup := totalNodes - firstGroup
